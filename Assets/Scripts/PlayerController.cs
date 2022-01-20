@@ -21,10 +21,17 @@ public class PlayerController : MonoBehaviour
         float vertical = Input.GetAxis("Vertical");
         float horizontal = Input.GetAxis("Horizontal");
 
-        Vector3 velocity = new Vector3(horizontal*Time.deltaTime*speed, vertical*Time.deltaTime* speed, 0);
+        Vector3 velocity = new Vector3(horizontal*speed, vertical* speed, 0);
 
+        GetComponent<Rigidbody2D>().velocity = velocity;
+        GetComponent<Rigidbody2D>().angularVelocity = 0f;
+        transform.rotation = Quaternion.identity;
+        //face movement
+        //move the face of the character to give a sense of direction to the user
+        //the face will move based on the horizontal and vertical values
 
-        transform.position += velocity;
+        Vector3 newFacePos = new Vector3(horizontal/4, vertical/4, 0);
+        transform.Find("Visuals").localPosition = Vector3.Lerp(transform.Find("Visuals").localPosition, newFacePos, Time.deltaTime * 4);
 
     }
 }

@@ -12,10 +12,10 @@ public class GridSystem : MonoBehaviour
     private Tile[,] gridTiles;
     private Tile[,] emptyTiles;
 
-    private float noiseFrequency = .2f;
+    private float noiseFrequency = .175f;
     private float noiseHeight = 1f;
 
-    private float noiseObstacleThreshold = .55f;
+    private float noiseObstacleThreshold = .63f;
 
     public GameObject player;
 
