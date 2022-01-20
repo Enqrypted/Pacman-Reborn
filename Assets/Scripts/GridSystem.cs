@@ -67,6 +67,10 @@ public class GridSystem : MonoBehaviour
 
                 float noiseObstacle = GetNoiseObstacle(x, y);
 
+                if ((x+y)%2 == 0) {
+                    tileClass.tileObject.GetComponent<SpriteRenderer>().color = new Color(76f/255f, 81f/255f, 87f/255f);
+                }
+
                 if (noiseObstacle >= noiseObstacleThreshold){
                     //this tile should be an obstacle
                     tileClass.occupationType = "Obstacle";
