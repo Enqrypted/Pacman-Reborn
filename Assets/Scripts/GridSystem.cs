@@ -17,6 +17,8 @@ public class GridSystem : MonoBehaviour
 
     private float noiseObstacleThreshold = .55f;
 
+    public GameObject player;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -24,7 +26,8 @@ public class GridSystem : MonoBehaviour
         emptyTiles = new Tile[gridSize, gridSize];
         SetupGrid();
 
-        print(GetRandomEmptyTile().tileObject);
+        GameObject spawnTile = GetRandomEmptyTile().tileObject;
+        player = Instantiate((GameObject)Resources.Load("Player"), spawnTile.transform.position, Quaternion.identity);
 
     }
 
