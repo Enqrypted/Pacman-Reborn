@@ -1,6 +1,7 @@
 using Pathfinding;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class GridSystem : MonoBehaviour
@@ -22,17 +23,25 @@ public class GridSystem : MonoBehaviour
 
     List<GameObject> enemies;
 
+    float noiseSeed = 0f;
+
+    int score = 0;
+
     // Start is called before the first frame update
     void Start()
     {
         gridTiles = new Tile[gridSize, gridSize];
         emptyTiles = new Tile[gridSize, gridSize];
+
+        //randomize the noise seed
+        noiseSeed = Random.Range(100f, 10000f);
+
         SetupGrid();
+
 
         enemies = new List<GameObject>();
 
-        
-
+        enemies.Add(AddEnemy());
         enemies.Add(AddEnemy());
 
         GameObject spawnTile = GetRandomEmptyTile(10).tileObject;
@@ -43,11 +52,36 @@ public class GridSystem : MonoBehaviour
             enemy.GetComponent<AIDestinationSetter>().target = player.transform;
         }
 
+
+        //add food to map
+        int foodAmount = Random.Range(3, 6);
+        for (int i = 0; i < foodAmount; i++) {
+            AddFood();
+        }
+
     }
 
     GameObject AddEnemy() {
         GameObject spawnTile = GetRandomEmptyTile(1).tileObject;
         return Instantiate((GameObject)Resources.Load("Baddie"), spawnTile.transform.position, Quaternion.identity);
+    }
+
+    public void EatFood(GameObject food) {
+        score += food.GetComponent<FoodManager>().points;
+
+        GameObject.FindGameObjectWithTag("Score").GetComponent<TextMeshProUGUI>().text = "Score: " + score.ToString();
+        //todo scare enemies away
+        Vector2Int tilePos = GetTilePos(food.GetComponent<FoodManager>().tile.tileObject);
+        emptyTiles[tilePos.x, tilePos.y] = food.GetComponent<FoodManager>().tile;
+        Destroy(food);
+
+        AddFood();
+
+    }
+    void AddFood() {
+        Tile spawnTile = GetRandomEmptyTile(1);
+        Instantiate((GameObject)Resources.Load("Apple"), spawnTile.transform.position, Quaternion.identity).GetComponent<FoodManager>().tile = spawnTile;
+        SetEmptyTile(spawnTile.tileObject);
     }
 
     void SetEmptyTile(GameObject tile) {
@@ -57,7 +91,7 @@ public class GridSystem : MonoBehaviour
 
     float GetNoiseObstacle(int x, int y){
         //use math noise to create an obstacle pattern and return whether the obstacle at the current position should be an obstacle or not
-        float height = Mathf.PerlinNoise(x*noiseFrequency, y*noiseFrequency)*noiseHeight;
+        float height = Mathf.PerlinNoise((x+noiseSeed)*noiseFrequency, (y+noiseSeed) *noiseFrequency)*noiseHeight;
 
         return height;
     }
@@ -71,9 +105,13 @@ public class GridSystem : MonoBehaviour
         Tile foundTile = emptyTiles[Random.Range(0, gridSize), Random.Range(0, gridSize)];
 
         bool isFarEnough = true;
-        foreach (GameObject enemy in enemies) {
-            if (Vector3.Distance(enemy.transform.position, foundTile.tileObject.transform.position) < distanceFromEnemies) {
-                isFarEnough = false;
+        if (foundTile != null) {
+            foreach (GameObject enemy in enemies)
+            {
+                if (Vector3.Distance(enemy.transform.position, foundTile.tileObject.transform.position) < distanceFromEnemies)
+                {
+                    isFarEnough = false;
+                }
             }
         }
 
@@ -100,6 +138,9 @@ public class GridSystem : MonoBehaviour
                 tileClass.tileObject = tileObject;
                 tileClass.obstacle = tileObject.transform.Find("Obstacle").gameObject;
 
+                tileClass.xIndex = x;
+                tileClass.yIndex = y;
+
                 float noiseObstacle = GetNoiseObstacle(x, y);
 
                 if ((x+y)%2 == 0) {
@@ -118,7 +159,7 @@ public class GridSystem : MonoBehaviour
                     Color.RGBToHSV(tileClass.obstacle.GetComponent<SpriteRenderer>().color, out H, out S, out V);
 
 
-                    tileClass.obstacle.GetComponent<SpriteRenderer>().color = Color.HSVToRGB(H, S, V - (noiseObstacle-noiseObstacleThreshold));
+                    tileClass.obstacle.GetComponent<SpriteRenderer>().color = Color.HSVToRGB(H, S, V - ((noiseObstacle - noiseObstacleThreshold)*1.5f));
                 }else{
                     emptyTiles[x, y] = tileClass;
                     tileClass.obstacle.SetActive(false);

@@ -260,6 +260,7 @@ GameObject:
   - component: {fileID: 3608187855383865904}
   - component: {fileID: 1417717876133095529}
   - component: {fileID: -2206396555641601892}
+  - component: {fileID: -818271385577726969}
   m_Layer: 7
   m_Name: Baddie
   m_TagString: Player
@@ -395,7 +396,7 @@ MonoBehaviour:
     maximumInterval: 2
     visualizeSensitivity: 0
   canMove: 1
-  speed: 5
+  speed: 6
   orientation: 1
   enableRotation: 0
   rotationSpeed: 10
@@ -430,6 +431,18 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!114 &-818271385577726969
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6618188179790399354}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd448098f5189c1408570bea8dfa4251, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &7249022621132626015
 GameObject:
   m_ObjectHideFlags: 0
