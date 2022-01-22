@@ -1,3 +1,4 @@
+using Pathfinding;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -19,6 +20,8 @@ public class GridSystem : MonoBehaviour
 
     public GameObject player;
 
+    List<GameObject> enemies;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -26,9 +29,30 @@ public class GridSystem : MonoBehaviour
         emptyTiles = new Tile[gridSize, gridSize];
         SetupGrid();
 
-        GameObject spawnTile = GetRandomEmptyTile().tileObject;
+        enemies = new List<GameObject>();
+
+        
+
+        enemies.Add(AddEnemy());
+
+        GameObject spawnTile = GetRandomEmptyTile(10).tileObject;
         player = Instantiate((GameObject)Resources.Load("Player"), spawnTile.transform.position, Quaternion.identity);
 
+        foreach (GameObject enemy in enemies)
+        {
+            enemy.GetComponent<AIDestinationSetter>().target = player.transform;
+        }
+
+    }
+
+    GameObject AddEnemy() {
+        GameObject spawnTile = GetRandomEmptyTile(1).tileObject;
+        return Instantiate((GameObject)Resources.Load("Baddie"), spawnTile.transform.position, Quaternion.identity);
+    }
+
+    void SetEmptyTile(GameObject tile) {
+        Vector2Int tilePos = GetTilePos(tile);
+        emptyTiles[tilePos.x, tilePos.y] = null;
     }
 
     float GetNoiseObstacle(int x, int y){
@@ -38,16 +62,27 @@ public class GridSystem : MonoBehaviour
         return height;
     }
 
-    Tile GetRandomEmptyTile()
+    Vector2Int GetTilePos(GameObject tile) {
+        return new Vector2Int(Mathf.RoundToInt(tile.transform.position.x + (gridSize / 2) - (tileSize / 2)), Mathf.RoundToInt(tile.transform.position.y + (gridSize / 2) - (tileSize / 2)));
+    }
+
+    Tile GetRandomEmptyTile(float distanceFromEnemies)
     {
         Tile foundTile = emptyTiles[Random.Range(0, gridSize), Random.Range(0, gridSize)];
 
-        if (foundTile != null)
+        bool isFarEnough = true;
+        foreach (GameObject enemy in enemies) {
+            if (Vector3.Distance(enemy.transform.position, foundTile.tileObject.transform.position) < distanceFromEnemies) {
+                isFarEnough = false;
+            }
+        }
+
+        if ((foundTile != null) && isFarEnough)
         {
             return foundTile;
         }
         else {
-            return GetRandomEmptyTile();
+            return GetRandomEmptyTile(distanceFromEnemies);
         }
 
     }
@@ -97,6 +132,6 @@ public class GridSystem : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        AstarPath.active.Scan();
     }
 }
