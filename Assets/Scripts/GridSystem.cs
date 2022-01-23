@@ -21,6 +21,10 @@ public class GridSystem : MonoBehaviour
 
     public GameObject player;
 
+    //the time left of the player powerup
+    //when the player is in powerup mode, the enemies run the opposite direction
+    public float powerUpTime = 0f;
+
     List<GameObject> enemies;
 
     float noiseSeed = 0f;
@@ -70,7 +74,10 @@ public class GridSystem : MonoBehaviour
         score += food.GetComponent<FoodManager>().points;
 
         GameObject.FindGameObjectWithTag("Score").GetComponent<TextMeshProUGUI>().text = "Score: " + score.ToString();
-        //todo scare enemies away
+
+        //add powerup time
+        powerUpTime += food.GetComponent<FoodManager>().points / 10f;
+
         Vector2Int tilePos = GetTilePos(food.GetComponent<FoodManager>().tile.tileObject);
         emptyTiles[tilePos.x, tilePos.y] = food.GetComponent<FoodManager>().tile;
         Destroy(food);
@@ -173,6 +180,7 @@ public class GridSystem : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        powerUpTime = Mathf.Max(0, powerUpTime - Time.deltaTime);
         AstarPath.active.Scan();
     }
 }

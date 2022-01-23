@@ -13,8 +13,7 @@ public class FoodManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
-        points = Random.Range(1,4)*5;
+        points = Random.Range(2,4)*5;
 
         transform.Find("Canvas").Find("txt").GetComponent<TextMeshProUGUI>().text = points.ToString();
 
