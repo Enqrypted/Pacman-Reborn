@@ -6,6 +6,8 @@ TagManager:
   tags:
   - Score
   - Lives
+  - Tutorial
+  - clickThing
   layers:
   - Default
   - TransparentFX

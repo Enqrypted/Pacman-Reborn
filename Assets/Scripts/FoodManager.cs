@@ -33,7 +33,16 @@ public class FoodManager : MonoBehaviour
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Player")) {
-            GameObject.Find("GameManager").GetComponent<GridSystem>().EatFood(gameObject);
+
+            if (GameObject.Find("GameManager").GetComponent<GridSystem>() != null)
+            {
+                GameObject.Find("GameManager").GetComponent<GridSystem>().EatFood(gameObject);
+            }
+            else {
+                GameObject.Find("GameManager").GetComponent<TutorialSystem>().EatFood(gameObject);
+            }
+            
+            
         }
     }
 }

@@ -13,22 +13,29 @@ public class EnemyController : MonoBehaviour
     void Start()
     {
 
-        if (PlayerPrefs.GetInt("Difficulty", 1) == 1) {
-            //easy mode
-            GetComponent<AILerp>().speed = 5f;
-        }else if (PlayerPrefs.GetInt("Difficulty", 1) == 2)
-        {
-            //normal mode
-            GetComponent<AILerp>().speed = 7f;
-        }else if (PlayerPrefs.GetInt("Difficulty", 1) == 3)
-        {
-            //hard mode
-            GetComponent<AILerp>().speed = 9f;
-        }
+        ChangeSpeedForDifficulty();
 
         runAwayTarg = (new GameObject()).transform;
         runAwayTarg.parent = GameObject.Find("EnemyTargets").transform;
         gridSystem = GameObject.Find("GameManager").GetComponent<GridSystem>();
+    }
+
+    void ChangeSpeedForDifficulty() {
+        if (PlayerPrefs.GetInt("Difficulty", 1) == 1)
+        {
+            //easy mode
+            GetComponent<AILerp>().speed = 5f;
+        }
+        else if (PlayerPrefs.GetInt("Difficulty", 1) == 2)
+        {
+            //normal mode
+            GetComponent<AILerp>().speed = 7f;
+        }
+        else if (PlayerPrefs.GetInt("Difficulty", 1) == 3)
+        {
+            //hard mode
+            GetComponent<AILerp>().speed = 9f;
+        }
     }
 
     IEnumerator HitCooldown() {
@@ -61,6 +68,7 @@ public class EnemyController : MonoBehaviour
             //run away
             if (GetComponent<AIDestinationSetter>().target != runAwayTarg)
             {
+                GetComponent<AILerp>().speed = 6f;
                 GetComponent<AIDestinationSetter>().target = runAwayTarg;
             }
 
@@ -73,6 +81,7 @@ public class EnemyController : MonoBehaviour
             //run towards player
             if (GetComponent<AIDestinationSetter>().target == runAwayTarg)
             {
+                ChangeSpeedForDifficulty();
                 GetComponent<SpriteRenderer>().color = new Color(.94f, .28f, .32f);
                 GetComponent<AIDestinationSetter>().target = GameObject.FindGameObjectWithTag("Player").transform;
             }

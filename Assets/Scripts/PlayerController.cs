@@ -42,8 +42,22 @@ public class PlayerController : MonoBehaviour
 
     public void DamagePlayer() {
         GameObject livesContainer = GameObject.FindGameObjectWithTag("Lives");
-        if (livesContainer.transform.childCount < 2)
+        if (livesContainer != null && livesContainer.transform.childCount < 2)
         {
+
+            //set scores
+            //get current score first
+            int currentScore = GameObject.Find("GameManager").GetComponent<GridSystem>().score;
+
+            //set the current score playerPref
+            PlayerPrefs.SetInt("CurrentScore", currentScore);
+
+            //if the current score is higher than the highest high score
+            if (PlayerPrefs.GetInt("HighestScore", 0) < currentScore) {
+                //update the highest store
+                PlayerPrefs.SetInt("HighestScore", currentScore);
+            }
+
             SceneManager.LoadScene("Highscores");
         }
         else

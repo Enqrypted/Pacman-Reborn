@@ -29,7 +29,7 @@ public class GridSystem : MonoBehaviour
 
     float noiseSeed = 0f;
 
-    int score = 0;
+    public int score = 0;
 
     // Start is called before the first frame update
     void Start()
